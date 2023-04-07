@@ -176,6 +176,8 @@ def disconnect(id):
 
 
 if __name__ == "__main__":
+    pass
+    
     # connection_id, room = connect()
     # print(f"Created: connectionId = {connection_id} roomId = {room}")
     #
@@ -187,8 +189,8 @@ if __name__ == "__main__":
     #
     # send_message(connection_id, "Hello")
 
-    r.keys()
+    # r.keys()
 
-    {"message": "Hi", "action": "create_room"}
-    {"message": "hello", "action": "join_room", "room_id": "iduelgQja"}
-    {"message": "hello", "action": "chat"}
+    # {"message": "Hi", "action": "create_room"}
+    # {"message": "hello", "action": "join_room", "room_id": "iduelgQja"}
+    # {"message": "hello", "action": "chat"}
