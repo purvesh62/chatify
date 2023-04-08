@@ -3,7 +3,7 @@ import React from "react";
 export default function LeftBubble({ data }) {
   console.log(data);
   return (
-    <div className="chat chat-start ml-4 mb-1">
+    <div className="chat chat-start lg:ml-3 xs:ml-1 mb-1">
       <div className="chat-image avatar">
         <div className="w-10 rounded-full border-1 border-gray-50">
           <p className="h-full text-center pt-1.5 chat-bubble-primary">

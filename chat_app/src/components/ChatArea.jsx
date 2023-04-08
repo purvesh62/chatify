@@ -24,11 +24,11 @@ export default function ChatArea(props) {
   scrollToBottom();
 
   return (
-    <div className="container h-screen flex items-center align-middle px-32">
-      <div className="min-w-full mx-auto border-8 border-gray-500 rounded lg:block">
+    <div className="container h-screen flex items-center align-middle lg:px-32">
+      <div className="min-w-full mx-auto border-8 border-gray-500 rounded">
         <div className="w-full">
           {/* Header */}
-          <div className="relative p-3 border-b border-gray-300 flex justify-between">
+          <div className="relative p-5 border-b border-gray-300 flex justify-between">
             <div className="flex items-center">
               <img
                 className="object-cover w-10 h-10 rounded-full"
@@ -51,14 +51,14 @@ export default function ChatArea(props) {
                   props.disconnectChat(e);
                 }}
                 type="button"
-                class="focus:outline-none text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                className="focus:outline-none text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                 Disconnect
               </button>
             </div>
           </div>
 
           <div
-            className="relative w-full p-6 overflow-y-auto h-[30rem]"
+            className="relative w-full py-4 px-2 overflow-y-auto h-[30rem]"
             ref={messagesEndRef}>
             {bubbles}
           </div>

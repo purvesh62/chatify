@@ -3,7 +3,7 @@ import React from "react";
 export default function JoinRoomForm() {
   return (
     <div
-      class="hidden px-4 rounded-lg "
+      className="hidden px-4 rounded-lg "
       id="dashboard"
       role="tabpanel"
       aria-labelledby="join-room">

@@ -2,7 +2,7 @@ import React from "react";
 
 export default function RightBubble({data}) {
   return (
-    <div className="chat chat-end mb-1">
+    <div className="chat chat-end lg:mr-3 xs:mr-1 mb-1">
       <div className="chat-image avatar">
         <div className="w-10 rounded-full border-1 border-gray-50">
           <p className="h-full text-center pt-1.5 chat-bubble-warning">{data.username && data.username[0]}</p>
