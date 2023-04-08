@@ -1,9 +1,15 @@
 import React from "react";
 import LeftBubble from "./LeftBubble";
 import RightBubble from "./RightBubble";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 export default function ChatArea(props) {
+  const [imgGif, setImgGif] = useState(
+    "https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
+  );
+  console.log(imgGif);
+
   console.log("props: ", props);
   let messages = props.messages;
 
@@ -14,6 +20,17 @@ export default function ChatArea(props) {
       return <LeftBubble data={m} />;
     }
   });
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://api.giphy.com/v1/gifs/random?api_key=0UTRbFtkMxAplrohufYco5IY74U8hOes&tag=chat&rating=pg-13`
+      )
+      .then((res) => {
+        console.log(res.data);
+        setImgGif(res.data.data.images.original.url);
+      });
+  }, []);
 
   const messagesEndRef = useRef(null);
 
@@ -32,7 +49,11 @@ export default function ChatArea(props) {
             <div className="flex items-center">
               <img
                 className="object-cover w-10 h-10 rounded-full"
-                src="https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
+                src={
+                  imgGif
+                    ? imgGif
+                    : "https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
+                }
                 alt="username"
               />
               <div className="flex flex-col">
@@ -43,7 +64,7 @@ export default function ChatArea(props) {
                   Name: {props.username}
                 </span>
               </div>
-              <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span>
+              <span className="absolute w-3 h-3 bg-green-600 rounded-full left-12 top-5"></span>
             </div>
             <div>
               <button

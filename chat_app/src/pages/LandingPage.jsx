@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const Home = (props) => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Home = (props) => {
 
   useEffect(() => {
     if (location.state) {
-      window.history.replaceState({}, document.title)
+      window.history.replaceState({}, document.title);
       window.location.reload(false);
     }
   }, []);
@@ -46,7 +47,7 @@ const Home = (props) => {
   };
 
   return (
-    <div className="h-screen bg-gray-50">
+    <div className="h-full bg-gray-50">
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="h-screen py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Jumpotron Header */}
@@ -55,8 +56,10 @@ const Home = (props) => {
               Chat Room
             </h1>
             <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-              Here at Flowbite we focus on markets where technology, innovation,
-              and capital can unlock long-term value and drive economic growth.
+              Create your own chat room and invite your friends to join you! Our
+              chat room application allows you to create a private chat room and
+              start chatting with your friends in seconds. Join us now and start
+              chatting with your friends!
             </p>
             <a
               href="#"
@@ -239,6 +242,7 @@ const Home = (props) => {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

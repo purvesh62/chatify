@@ -3,6 +3,7 @@ import Sockette from "sockette";
 import { useLocation } from "react-router-dom";
 import ChatArea from "../components/ChatArea";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 let sc = null;
 
@@ -109,14 +110,17 @@ export default function ChatRoom({ props }) {
   }
 
   return (
-    <div className="h-screen flex justify-center">
-      <ChatArea
-        messages={messages}
-        sendMessage={sendMessage}
-        roomId={socketRoomId}
-        username={username}
-        disconnectChat={disconnectChat}
-      />
+    <div>
+      <div className="h-screen flex justify-center">
+        <ChatArea
+          messages={messages}
+          sendMessage={sendMessage}
+          roomId={socketRoomId}
+          username={username}
+          disconnectChat={disconnectChat}
+        />
+      </div>
+      <Footer/>
     </div>
   );
 }

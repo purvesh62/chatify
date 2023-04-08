@@ -62,6 +62,7 @@ class SocketHandler:
         sockets_in_room = redis.get_item(f"{self.key_room_sockets}{room_id}")
         message = self.body.get("message")
         for socket in sockets_in_room:
+            print(f"Sending message to {socket} with {message}")
             self.send_message({
                 "type": "chat",
                 "message": message
@@ -104,16 +105,23 @@ class SocketHandler:
     def join_room(self):
         rooms = self.get_rooms()
         room_id = self.body.get('room_id')
+        print("room body: ", self.body)
         if len(rooms) > 0 and room_id in rooms:
             room_sockets = redis.get_item(f"{self.key_room_sockets}{room_id}")
             room_sockets.append(self.connection_id)
-
+            print(f"Socket rooms: {room_sockets}")
             # Add cache room_socket -> connect_id
             redis.set_item(f"{self.key_room_sockets}{room_id}", room_sockets)
 
             sockets_map = self.get_socket_map()
             sockets_map[self.connection_id] = room_id
             redis.set_item(self.key_sockets, sockets_map)
+            for socket in room_sockets:
+                print(f"Sending message to {socket}")
+                self.send_message({
+                    "type": "chat",
+                    "message": f"{self.body.get('message').get('username')} has joined the chat."
+                }, socket)
 
             self.send_message({
                 "type": "join_room",
@@ -131,6 +139,7 @@ class SocketHandler:
         return
 
     def disconnect(self):
+
         sockets = self.get_socket_map()
         if self.connection_id in sockets:
             room_id = sockets[self.connection_id]
