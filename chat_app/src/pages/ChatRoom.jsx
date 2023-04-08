@@ -1,19 +1,18 @@
 import { useEffect, useState } from "react";
 import Sockette from "sockette";
 import { useLocation } from "react-router-dom";
-import Text from "../components/Text";
+import ChatArea from "../components/ChatArea";
+import { useNavigate } from "react-router-dom";
 
 let sc = null;
 
 export default function ChatRoom({ props }) {
+  const navigate = useNavigate();
+
   const location = useLocation();
   let { username, roomId, type } = location.state;
   const [socketRoomId, setSocketRoomId] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isConnected, setIsConnected] = useState(false);
-  // console.log(username);
-  // console.log(roomId);
-  // console.log(type);
 
   useEffect(() => {
     sc = new Sockette(import.meta.env.VITE_APP_SOCKET_URL, {
@@ -24,9 +23,28 @@ export default function ChatRoom({ props }) {
       onreconnect: (e) => console.log("Reconnecting...", e),
       onmaximum: (e) => console.log("Stop Attempting!", e),
       onclose: (e) => onDisconnect(e),
-      onerror: (e) => onError(e),
+      onerror: (e) => console.log("On error: ", e),
     });
   }, []);
+
+  window.onbeforeunload = (event) => {
+    const e = event || window.event;
+    // Cancel the event
+    e.preventDefault();
+    // if (e) {
+    //   e.returnValue =
+    //     "If you refresh the browser then you might lose the access to the chatroom"; // Legacy method for cross browser support; // Legacy method for cross browser support
+    // }
+    alert(
+      "On refresh you might lose the access to the chatroom. Do you want to continue? (y/n)"
+    );
+    navigate("/", {
+      state: {
+        reload: true,
+      },
+    });
+    // return "If you refresh the browser then you might lose the access to the chatroom"; // Legacy method for cross browser support
+  };
 
   function onConnect(e) {
     console.log("Connected ", e);
@@ -79,13 +97,25 @@ export default function ChatRoom({ props }) {
     });
   }
 
+  function disconnectChat(e) {
+    e.preventDefault();
+    console.log("Disconnecting...");
+    sc.close(); // graceful shutdown
+    navigate("/", {
+      state: {
+        reload: true,
+      },
+    });
+  }
+
   return (
     <div className="h-screen flex justify-center">
-      <Text
+      <ChatArea
         messages={messages}
         sendMessage={sendMessage}
         roomId={socketRoomId}
         username={username}
+        disconnectChat={disconnectChat}
       />
     </div>
   );

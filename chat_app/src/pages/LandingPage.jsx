@@ -1,15 +1,24 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Home = (props) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [createRoomUsername, setCreateRoomUsername] = useState("");
   const [joinRoomUsername, setJoinRoomUsername] = useState("");
   const [joinRoomId, setJoinRoomId] = useState("");
 
+  useEffect(() => {
+    if (location.state) {
+      window.history.replaceState({}, document.title)
+      window.location.reload(false);
+    }
+  }, []);
+
   const handleCreateRoom = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     console.log("create room username: ", createRoomUsername);
     // localStorage.setItem("username", createRoomUsername);
     navigate("/chatroom", {
@@ -18,7 +27,7 @@ const Home = (props) => {
   };
 
   const handleJoinRoom = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     console.log("join room username: ", joinRoomUsername);
     console.log("join room id: ", joinRoomId);
     localStorage.setItem("username", joinRoomUsername);

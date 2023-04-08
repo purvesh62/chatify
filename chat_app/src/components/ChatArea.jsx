@@ -1,8 +1,9 @@
 import React from "react";
 import LeftBubble from "./LeftBubble";
 import RightBubble from "./RightBubble";
+import { useEffect, useRef } from "react";
 
-export default function Text(props) {
+export default function ChatArea(props) {
   console.log("props: ", props);
   let messages = props.messages;
 
@@ -14,24 +15,51 @@ export default function Text(props) {
     }
   });
 
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  scrollToBottom();
+
   return (
-    <div className="container h-screen flex items-center align-middle">
-      <div className="min-w-full mx-auto border-8 border-gray-500 rounded lg:col-span-2 lg:block">
+    <div className="container h-screen flex items-center align-middle px-32">
+      <div className="min-w-full mx-auto border-8 border-gray-500 rounded lg:block">
         <div className="w-full">
           {/* Header */}
-          <div className="relative p-3 border-b border-gray-300">
-            <img
-              className="object-cover w-10 h-10 rounded-full"
-              src="https://images.unsplash.com/photo-1679083216051-aa510a1a2c0e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-              alt="username"
-            />
-            <span className="block ml-2 font-bold text-gray-600">
-              {props.roomId}
-            </span>
-            <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span>
+          <div className="relative p-3 border-b border-gray-300 flex justify-between">
+            <div className="flex items-center">
+              <img
+                className="object-cover w-10 h-10 rounded-full"
+                src="https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
+                alt="username"
+              />
+              <div className="flex flex-col">
+                <span className="block ml-2 font-bold text-gray-600">
+                  Room ID: {props.roomId}
+                </span>
+                <span className="block ml-2 text-l text-gray-600">
+                  Name: {props.username}
+                </span>
+              </div>
+              <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3"></span>
+            </div>
+            <div>
+              <button
+                onClick={(e) => {
+                  props.disconnectChat(e);
+                }}
+                type="button"
+                class="focus:outline-none text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
+                Disconnect
+              </button>
+            </div>
           </div>
 
-          <div className="relative w-full p-6 overflow-y-auto h-[30rem]">
+          <div
+            className="relative w-full p-6 overflow-y-auto h-[30rem]"
+            ref={messagesEndRef}>
             {bubbles}
           </div>
 
