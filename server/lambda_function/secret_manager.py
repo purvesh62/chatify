@@ -13,7 +13,7 @@ class SecretManager:
     def get_secret_value(self, parameter_name):
         try:
             get_secret_value_response = self.client.get_secret_value(
-                SecretId=secret_name
+                SecretId=parameter_name
             )
         except Exception as e:
             raise e

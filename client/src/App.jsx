@@ -1,36 +1,19 @@
-import {
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  useLocation,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
-import Homepage from "./pages/Homepage";
-import Login from "./pages/Login";
-import ImageInfo from "./pages/ImageInfo";
-import SignUp from "./pages/SignUp";
-import PrivateRoutes from "./utils/PrivateRoutes";
+import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import ErrorPage from "./pages/ErrorPage";
+import ChatRoom from "./pages/ChatRoom";
+import About from "./pages/About";
+import "./App.css";
 
 function App() {
-
   return (
-    <>
-      <Routes>
-        {/* Authentication */}
-        <Route path="/signin" element={<Login />}></Route>
-        <Route path="/signup" element={<SignUp />}></Route>
-
-        {/* Protected Routes */}
-        <Route element={<PrivateRoutes />}>
-          <Route path="/" element={<Homepage />}></Route>
-          <Route path="/info" element={<ImageInfo />}></Route>
-        </Route>
-      </Routes>
-
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<LandingPage />}></Route>
+      <Route path="/chatroom" element={<ChatRoom />}></Route>
+      <Route path="/about" element={<About />}></Route>
+      <Route path="*" element={<ErrorPage />}></Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;

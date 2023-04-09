@@ -1,1 +1,6 @@
+# Client files
+/client/node_modules
+
+
 /server/.idea
+/server/venv
