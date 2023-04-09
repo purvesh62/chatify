@@ -79,8 +79,10 @@ const Home = (props) => {
               start chatting with your friends in seconds. Join us now and start
               chatting with your friends!
             </p>
-            <a
-              href="#"
+            <button
+              onClick={() => {
+                navigate("/about");
+              }}
               className="text-blue-600 dark:text-blue-500 hover:underline font-medium text-lg inline-flex items-center">
               Read more about our app
               <svg
@@ -96,7 +98,7 @@ const Home = (props) => {
                   strokeLinejoin="round"
                   d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
               </svg>
-            </a>
+            </button>
           </div>
           {/* Create Room Form */}
           <div className="flex justify-center items-center">
@@ -122,23 +124,23 @@ const Home = (props) => {
                   <li className="mr-2" role="presentation">
                     <button
                       className="inline-block p-4 border-b-2 rounded-t-lg"
-                      id="create-room"
-                      data-tabs-target="#profile"
+                      id="create-room-tab"
+                      data-tabs-target="#create-room"
                       type="button"
                       role="tab"
-                      aria-controls="profile"
-                      aria-selected="false">
+                      aria-controls="create-room"
+                      aria-selected="true">
                       Create Room
                     </button>
                   </li>
                   <li className="mr-2" role="presentation">
                     <button
                       className="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
-                      id="join-room"
-                      data-tabs-target="#dashboard"
+                      id="join-room-tab"
+                      data-tabs-target="#join-room"
                       type="button"
                       role="tab"
-                      aria-controls="dashboard"
+                      aria-controls="join-room"
                       aria-selected="false">
                       Join Room
                     </button>
@@ -148,9 +150,9 @@ const Home = (props) => {
               <div id="myTabContent">
                 <div
                   className="hidden px-4 rounded-lg "
-                  id="profile"
+                  id="create-room"
                   role="tabpanel"
-                  aria-labelledby="create-room">
+                  aria-labelledby="create-room-tab">
                   <form
                     className="space-y-6"
                     onSubmit={(e) => {
@@ -183,9 +185,9 @@ const Home = (props) => {
                 {/* Join room */}
                 <div
                   className="hidden px-4 rounded-lg "
-                  id="dashboard"
+                  id="join-room"
                   role="tabpanel"
-                  aria-labelledby="join-room">
+                  aria-labelledby="join-room-tab">
                   <form
                     className="space-y-6"
                     onSubmit={(e) => {

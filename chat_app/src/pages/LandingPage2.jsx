@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
 import { ToastContainer, toast } from "react-toastify";
@@ -64,7 +64,7 @@ const Home = (props) => {
         theme="light"
       />
       <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="h-screen py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 lg:gap-16">
+        <div className="h-screen sm:h-full py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 lg:gap-16">
           {/* Jumpotron Header */}
           <div className="flex flex-col justify-center px-4">
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
@@ -79,8 +79,10 @@ const Home = (props) => {
               start chatting with your friends in seconds. Join us now and start
               chatting with your friends!
             </p>
-            <a
-              href="#"
+            <button
+              onClick={() => {
+                navigate("/about");
+              }}
               className="text-blue-600 dark:text-blue-500 hover:underline font-medium text-lg inline-flex items-center">
               Read more about our app
               <svg
@@ -96,7 +98,7 @@ const Home = (props) => {
                   strokeLinejoin="round"
                   d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
               </svg>
-            </a>
+            </button>
           </div>
           {/* Create Room Form */}
           <div className="flex justify-center items-center">
