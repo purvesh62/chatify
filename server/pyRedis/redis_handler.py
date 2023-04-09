@@ -16,6 +16,7 @@ class RedisHandler:
             port=sys_obj.get_parameter("redis_port"),
             username=sys_obj.get_parameter("redis_user"),
             password=sys_obj.get_parameter("redis_password"))
+        # password=secret_obj.get_secret_value("redis_password")).get("redis_password")
 
     def get_item(self, key):
         try:

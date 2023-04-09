@@ -61,11 +61,13 @@ class SocketHandler:
         room_id = self.get_room_id()
         sockets_in_room = redis.get_item(f"{self.key_room_sockets}{room_id}")
         message = self.body.get("message")
+        language = self.body.get("language", "en")
         for socket in sockets_in_room:
             print(f"Sending message to {socket} with {message}")
             self.send_message({
                 "type": "chat",
-                "message": message
+                "message": message,
+                "language": language
             }, socket)
 
     def create_room(self):

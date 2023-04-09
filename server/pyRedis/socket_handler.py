@@ -31,11 +31,20 @@ class SocketHandler:
     def chat(self):
         connection_id = self.connection_id
 
-        event_body = json.loads(self.event.get('body'))
+        event_body = {
+            "message": "Hello from Lambda!",
+            "type": "Global message"
+        }
 
-        api_client.post_to_connection(ConnectionId=connection_id, Data=json.dumps({'test': '1'}))
+        socket_ids = redis.get_item("socket_ids")
+        if socket_ids:
+            socket_ids = json.loads(socket_ids)
+            for id in socket_ids:
+                self.send_message(id, event_body)
 
-        print("CHAT called")
+    def send_message(self, id, body):
+        print("message body: ", body)
+        api_client.post_to_connection(ConnectionId=id, Data=json.dumps(body))
 
     def create_room(self):
         print("Create room")
@@ -56,3 +65,6 @@ class SocketHandler:
                 redis.delete_item("socket_ids")
 
         print("DISCONNECT called")
+
+
+
