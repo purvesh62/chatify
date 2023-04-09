@@ -4,6 +4,8 @@ import { useLocation } from "react-router-dom";
 import ChatArea from "../components/ChatArea";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import axios from "axios";
+
 
 let sc = null;
 
@@ -44,13 +46,12 @@ export default function ChatRoom({ props }) {
         reload: true,
       },
     });
-    // return "If you refresh the browser then you might lose the access to the chatroom"; // Legacy method for cross browser support
   };
 
   function onConnect(e) {
-    console.log("Connected ", e);
+    // console.log("Connected ", e);
     if (location.state.type == "create_room") {
-      console.log("creating room");
+      // console.log("creating room");
       sc.json({
         action: "create_room",
         message: {
@@ -70,13 +71,45 @@ export default function ChatRoom({ props }) {
 
   function onMessage(e) {
     let data = JSON.parse(e.data);
-    console.log("Message Received:", data);
+    // console.log("Incoming message: ", data);
     if (data.type === "create_room") {
+      localStorage.setItem("room", data.room_id);
       setSocketRoomId(data.room_id);
-    } else if (data.type === "join_room") {
+    } else if (data.type === "join_room" && data.room_id !== undefined) {
+      localStorage.setItem("room", data.room_id);
       setSocketRoomId(data.room_id);
     } else if (data.type === "chat") {
-      setMessages((prevMessages) => [...prevMessages, data.message]);
+      let selectedLanguage = document.getElementById("language").value;
+      if (
+        username !== data.message.username &&
+        selectedLanguage !== data.message.language
+      ) {
+        axios
+          .post("https://ccwzgwmlp4.execute-api.us-east-1.amazonaws.com/prod", {
+            message: data.message.message,
+            language: selectedLanguage,
+          })
+          .then(function (response) {
+            if (response.data.body !== undefined) {
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                  message: response.data.body.translated_text,
+                  username: data.message.username,
+                  language: data.message.username,
+                },
+              ]);
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else {
+        setMessages((prevMessages) => [...prevMessages, data.message]);
+      }
+      // setMessages((prevMessages) => [...prevMessages, data.message]);
+    } else {
+      navigate("/", { state: data });
     }
   }
 
@@ -85,15 +118,15 @@ export default function ChatRoom({ props }) {
   }
 
   function sendMessage(e) {
-    console.log("Submitted");
     e.preventDefault();
-    let message = e.target.children[2].value;
-    e.target.children[2].value = "";
+    let message = document.getElementById("message").value;
+    document.getElementById("message").value = "";
     sc.json({
       action: "chat",
       message: {
         message: message,
         username: username,
+        language: document.getElementById("language").value,
       },
     });
   }
@@ -120,7 +153,7 @@ export default function ChatRoom({ props }) {
           disconnectChat={disconnectChat}
         />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

@@ -8,18 +8,18 @@ export default function ChatArea(props) {
   const [imgGif, setImgGif] = useState(
     "https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
   );
-  console.log(imgGif);
 
-  console.log("props: ", props);
   let messages = props.messages;
 
-  let bubbles = messages.map((m) => {
+  let bubbles = messages.map((m, index) => {
     if (props.username === m.username) {
-      return <RightBubble data={m} />;
+      return <RightBubble key={index} data={m} />;
     } else {
-      return <LeftBubble data={m} />;
+      return <LeftBubble key={index} data={m} />;
     }
   });
+  // ref={messagesEndRef}
+  console.log(bubbles);
 
   useEffect(() => {
     axios
@@ -27,7 +27,6 @@ export default function ChatArea(props) {
         `https://api.giphy.com/v1/gifs/random?api_key=0UTRbFtkMxAplrohufYco5IY74U8hOes&tag=chat&rating=pg-13`
       )
       .then((res) => {
-        console.log(res.data);
         setImgGif(res.data.data.images.original.url);
       });
   }, []);
@@ -46,7 +45,7 @@ export default function ChatArea(props) {
         <div className="w-full">
           {/* Header */}
           <div className="relative p-5 border-b border-gray-300 flex justify-between">
-            <div className="flex items-center">
+            <div className="flex items-start">
               <img
                 className="object-cover w-10 h-10 rounded-full"
                 src={
@@ -66,7 +65,7 @@ export default function ChatArea(props) {
               </div>
               <span className="absolute w-3 h-3 bg-green-600 rounded-full left-12 top-5"></span>
             </div>
-            <div>
+            <div className="flex flex-col">
               <button
                 onClick={(e) => {
                   props.disconnectChat(e);
@@ -75,12 +74,30 @@ export default function ChatArea(props) {
                 className="focus:outline-none text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                 Disconnect
               </button>
+              <select
+                defaultValue={"en"}
+                className="select border-gray-300 bg-white w-full"
+                id="language">
+                <option value={"en"}>
+                  English
+                </option>
+                <option value={"ar"}>Arabic</option>
+                <option value={"zh"}>Chinese</option>
+                <option value={"fr"}>French</option>
+                <option value={"gu"}>Gujarati</option>
+                <option value={"hi"}>Hindi</option>
+                <option value={"pa"}>Punjabi</option>
+                <option value={"es"}>Spanish</option>
+                <option value={"ta"}>Tamil</option>
+                <option value={"te"}>Telugu</option>
+              </select>
             </div>
           </div>
 
           <div
             className="relative w-full py-4 px-2 overflow-y-auto h-[30rem]"
-            ref={messagesEndRef}>
+            >
+              {/* ref={messagesEndRef} */}
             {bubbles}
           </div>
 
@@ -89,59 +106,14 @@ export default function ChatArea(props) {
             onSubmit={(e) => {
               props.sendMessage(e);
             }}>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-6 h-6 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </button>
-            <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                />
-              </svg>
-            </button>
-
             <input
               type="text"
               placeholder="Message"
               className="block w-full py-2 pl-4 mx-3 bg-gray-100 rounded-full outline-none focus:text-gray-700"
               name="message"
+              id="message"
               required
             />
-            <button type="submit">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                />
-              </svg>
-            </button>
             <button type="submit">
               <svg
                 className="w-5 h-5 text-gray-500 origin-center transform rotate-90"

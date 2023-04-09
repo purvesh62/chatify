@@ -2,8 +2,11 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = (props) => {
+  let previousRoomId = localStorage.getItem("room");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +23,7 @@ const Home = (props) => {
 
   const handleCreateRoom = (e) => {
     // e.preventDefault();
-    console.log("create room username: ", createRoomUsername);
+    // console.log("create room username: ", createRoomUsername);
     // localStorage.setItem("username", createRoomUsername);
     navigate("/chatroom", {
       state: { username: createRoomUsername, type: "create_room" },
@@ -29,8 +32,8 @@ const Home = (props) => {
 
   const handleJoinRoom = (e) => {
     // e.preventDefault();
-    console.log("join room username: ", joinRoomUsername);
-    console.log("join room id: ", joinRoomId);
+    // console.log("join room username: ", joinRoomUsername);
+    // console.log("join room id: ", joinRoomId);
     localStorage.setItem("username", joinRoomUsername);
     navigate("/chatroom", {
       state: {
@@ -48,14 +51,29 @@ const Home = (props) => {
 
   return (
     <div className="h-full bg-gray-50">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="h-screen py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 gap-8 lg:gap-16">
+        <div className="h-screen py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 lg:gap-16">
           {/* Jumpotron Header */}
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center px-4">
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-              Chat Room
+              <span className="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">
+                Chatify!
+              </span>
             </h1>
-            <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
+            <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+            <p className="text-lg font-normal text-gray-500 lg:text-xl mb-2 dark:text-gray-400">
               Create your own chat room and invite your friends to join you! Our
               chat room application allows you to create a private chat room and
               start chatting with your friends in seconds. Join us now and start
@@ -80,14 +98,21 @@ const Home = (props) => {
               </svg>
             </a>
           </div>
-
           {/* Create Room Form */}
           <div className="flex justify-center items-center">
-            <div className="w-full lg:max-w-xl  p-6 space-y-8 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800 items-center">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="w-full lg:max-w-xl  p-6 space-y-2 sm:p-8 bg-white rounded-lg shadow-xl dark:bg-gray-800 items-center">
+              <h1 className="mb-4 text-xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
                 Let's chat!
-              </h2>
-
+              </h1>
+              {previousRoomId !== null && (
+                <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
+                  Most recent Room ID:{" "}
+                  <mark className="px-1 py-0.5 text-white bg-blue-600 rounded dark:bg-blue-500">
+                    {localStorage.getItem("room")}
+                  </mark>
+                </p>
+              )}
+              <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
               <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
                 <ul
                   className="flex flex-wrap -mb-px text-sm font-medium text-center"
@@ -206,36 +231,6 @@ const Home = (props) => {
                       Join Room
                     </button>
                   </form>
-                </div>
-                <div
-                  className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-                  id="settings"
-                  role="tabpanel"
-                  aria-labelledby="settings-tab">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    This is some placeholder content the{" "}
-                    <strong className="font-medium text-gray-800 dark:text-white">
-                      Settings tab's associated content
-                    </strong>
-                    . Clicking another tab will toggle the visibility of this
-                    one for the next. The tab JavaScript swaps classes to
-                    control the content visibility and styling.
-                  </p>
-                </div>
-                <div
-                  className="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800"
-                  id="contacts"
-                  role="tabpanel"
-                  aria-labelledby="contacts-tab">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    This is some placeholder content the{" "}
-                    <strong className="font-medium text-gray-800 dark:text-white">
-                      Contacts tab's associated content
-                    </strong>
-                    . Clicking another tab will toggle the visibility of this
-                    one for the next. The tab JavaScript swaps classes to
-                    control the content visibility and styling.
-                  </p>
                 </div>
               </div>
             </div>
