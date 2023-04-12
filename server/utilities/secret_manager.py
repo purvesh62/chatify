@@ -2,13 +2,13 @@
 # If you need more information about configurations
 # or implementing the sample code, visit the AWS docs:
 # https://aws.amazon.com/developer/language/python/
+import json
 
 import boto3
 from botocore.exceptions import ClientError
 
 
 def get_secret(secret_name):
-
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
@@ -23,5 +23,8 @@ def get_secret(secret_name):
         raise e
 
     return get_secret_value_response['SecretString']
-    
-get_secret("redis_password")
+
+
+credentials = get_secret("redis")
+credentials = json.loads(credentials)
+print(credentials)

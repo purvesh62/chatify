@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+
+  LambdaLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: python
+      Description: A layer for the chatify lambda function
+      CompatibleRuntimes:
+        - python3.9
+      Content:
+        S3Bucket: chatify-app-5409
+        S3Key: python.zip
+
+
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.9
+      Code:
+        S3Bucket: "chatify-app-5409"
+        S3Key: "chatapp.zip"
+      FunctionName: chatify-5409
+      Handler: lambda_handler
+      Role: "arn:aws:iam::714037844158:role/LabRole"
+      Layers:
+        - !Ref LambdaLayer

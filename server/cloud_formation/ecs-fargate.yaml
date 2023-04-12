@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  ECSClusterName:
+    Type: String
+    Default: chatappCluster
+  SecurityGroupName:
+    Type: CommaDelimitedList
+    Default: chatapp-ecs-sg
+  SubnetIDs:
+    Type: CommaDelimitedList
+    Default: >-
+      subnet-09935b814003529ab, subnet-0f816946b857832c3, subnet-049fb9c2ca8c40766
+
+Resources:
+  MyECSTaskDefinition:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      Family: 'chatify-ecs-task'
+      ContainerDefinitions:
+        - Name: 'my-ecr-repo'
+          Image: '714037844158.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:latest'
+          PortMappings:
+            - ContainerPort: 80
+      RequiresCompatibilities:
+        - FARGATE
+
+  MyECSService:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: 'my-ecs-cluster'
+      ServiceName: 'my-ecs-service'
+      TaskDefinition: !Ref MyECSTaskDefinition
+      LaunchType: FARGATE
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !Ref SecurityGroup
+          Subnets: !Ref SubnetIDs
+      PlatformVersion: LATEST
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      DeploymentController:
+        Type: ECS
+      ServiceConnectConfiguration:
+        Enabled: false
+      Tags: [ ]
+      EnableECSManagedTags: true
+
+
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Chat Application SG
+      GroupName: chatapp-ecs-sg
+      VpcId: vpc-0626e797938c37597
+      SecurityGroupIngress:
+        - FromPort: 3000
+          ToPort: 3000
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+        - FromPort: 3000
+          ToPort: 3000
+          IpProtocol: tcp
+          CidrIpv6: '::/0'

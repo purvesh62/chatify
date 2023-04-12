@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: The template used to create an ECS Service from the ECS Console.
+Parameters:
+  ECSClusterName:
+    Type: String
+    Default: chatappCluster
+  SecurityGroupName:
+    Type: CommaDelimitedList
+    Default: chatapp-ecs-sg
+  SubnetIDs:
+    Type: CommaDelimitedList
+    Default: >-
+      subnet-0ead7acdfc789e06b,subnet-03cb7f8e0c64ac076,subnet-08ce383dd642420d2,subnet-04b63015bc4bca0b9,subnet-0074ca620de17967c,subnet-0a30712d6b69817e1
+  VpcID:
+    Type: String
+    Default: vpc-0557e90a55f44e03c
+  LoadBalancerName:
+    Type: String
+    Default: ''
+
+Resources:
+  ECSService:
+    Type: 'AWS::ECS::Service'
+    Properties:
+      Cluster: chatappCluster
+      CapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 0
+          Weight: 1
+      TaskDefinition: 'arn:aws:ecs:us-east-1:572542253409:task-definition/chatapp:1'
+      ServiceName: chatapp
+      SchedulingStrategy: REPLICA
+      DesiredCount: 1
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !Ref SecurityGroup
+          Subnets: !Ref SubnetIDs
+      PlatformVersion: LATEST
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      DeploymentController:
+        Type: ECS
+      ServiceConnectConfiguration:
+        Enabled: false
+      Tags: [ ]
+      EnableECSManagedTags: true
+  SecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Chat Application SG
+      GroupName: chatapp-ecs-sg
+      VpcId: vpc-0557e90a55f44e03c
+      SecurityGroupIngress:
+        - FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+        - FromPort: 80
+          ToPort: 80
+          IpProtocol: tcp
+          CidrIpv6: '::/0'
+Outputs:
+  ClusterName:
+    Description: The cluster used to create the service.
+    Value: !Ref ECSClusterName
+  ECSService:
+    Description: The created service.
+    Value: !Ref ECSService

@@ -1,22 +1,21 @@
 import json
 import logging
 import redis
-from system_manager import SystemManager
 from secret_manager import SecretManager
 
 
 class RedisHandler:
 
     def __init__(self):
-        sys_obj = SystemManager()
         secret_obj = SecretManager()
-
+        redis_configurations = secret_obj.get_secret_value("redis")
+        redis_configurations = json.loads(redis_configurations)
         self.redis = redis.Redis(
-            host=sys_obj.get_parameter("redis_host"),
-            port=sys_obj.get_parameter("redis_port"),
-            username=sys_obj.get_parameter("redis_user"),
-            password=sys_obj.get_parameter("redis_password"))
-        # password=secret_obj.get_secret_value("redis_password")).get("redis_password")
+            host=redis_configurations.get("host"),
+            port=redis_configurations.get("port"),
+            username=redis_configurations.get("user"),
+            password=redis_configurations.get("password")
+        )
 
     def get_item(self, key):
         try:

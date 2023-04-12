@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Simple cloud formation for bucket creation and configuration
+
+Parameters:
+  BucketName: { Type: String, Default: "chatify-app-5409" }
+
+Resources:
+  MainBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: !Ref BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  Redis:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: redis
+      SecretString: "{   \"host\": \"redis-17221.c265.us-east-1-2.ec2.cloud.redislabs.com\",   \"password\": \"Redisroot1#\",   \"port\": \"17221\",   \"user\": \"purvesh.r\" }"
+
+  ECRRepository:
+    Type: 'AWS::ECR::Repository'
+    Properties:
+      RepositoryName: 'chatify-repo'
+
+Outputs:
+  MainBucketName:
+    Description: Bucket to store the Lambda function and layers for Chatify application
+    Value: !Ref MainBucket
