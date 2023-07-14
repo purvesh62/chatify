@@ -85,7 +85,7 @@ export default function ChatRoom({ props }) {
         selectedLanguage !== data.message.language
       ) {
         axios
-          .post("https://ccwzgwmlp4.execute-api.us-east-1.amazonaws.com/prod", {
+          .post(import.meta.env.VITE_APP_SOCKET_URL, {
             message: data.message.message,
             language: selectedLanguage,
           })

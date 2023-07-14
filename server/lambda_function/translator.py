@@ -3,12 +3,15 @@ import boto3
 
 translate = boto3.client('translate')
 
+
 def lambda_handler(event, context):
-    print(event)
+    print("Event: ", event)
+    
+    body = json.loads(event.get('body'))
 
-    SOURCE_TEXT = (event.get("message"))
+    SOURCE_TEXT = body.get("message")
 
-    OUTPUT_LANG_CODE = event.get('language')
+    OUTPUT_LANG_CODE = body.get('language')
 
     result = translate.translate_text(
         Text=SOURCE_TEXT,
@@ -21,9 +24,14 @@ def lambda_handler(event, context):
         "translated_text": result.get('TranslatedText'),
         "language": OUTPUT_LANG_CODE
     }
+    
     print(response)
     
     return {
         'statusCode': 200,
-        'body': response
+        'body': json.dumps(response),
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
     }

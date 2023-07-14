@@ -1,15 +1,99 @@
 import json
+import redis
 import boto3
 import string
 import random
 import logging
-from redis_handler import RedisHandler
 
-api_connection_url = "https://2b53u49ch2.execute-api.us-east-1.amazonaws.com/production"
+class SystemManager:
 
-api_client = boto3.client('apigatewaymanagementapi', endpoint_url=api_connection_url)
+    def __init__(self):
+        self.ssm = boto3.client('ssm')
 
-redis = RedisHandler()
+    def get_parameter(self, parameter_name):
+        response = self.ssm.get_parameter(
+            Name=parameter_name,
+            WithDecryption=True | False
+        )
+
+        if response.get('Parameter').get('Value'):
+            return response.get('Parameter').get('Value')
+        else:
+            logging.error("Error while fetching the parameter.")
+            return ""
+
+
+class SecretManager:
+
+    def __init__(self):
+        session = boto3.session.Session()
+        self.client = session.client(
+            service_name='secretsmanager'
+        )
+
+    def get_secret_value(self, parameter_name):
+        try:
+            get_secret_value_response = self.client.get_secret_value(
+                SecretId=parameter_name
+            )
+        except Exception as e:
+            raise e
+        return get_secret_value_response['SecretString']
+
+
+class RedisHandler:
+
+    def __init__(self):
+        secret_obj = SecretManager()
+        redis_configurations = secret_obj.get_secret_value("redis")
+        redis_configurations = json.loads(redis_configurations)
+        self.redis = redis.Redis(
+            host=redis_configurations.get("host"),
+            port=redis_configurations.get("port"),
+            username=redis_configurations.get("user"),
+            password=redis_configurations.get("password")
+        )
+
+    def get_item(self, key):
+        try:
+            data = self.redis.get(key)
+            if data:
+                return json.loads(data.decode())
+        except Exception as exc:
+            logging.exception(exc)
+        return None
+
+    def set_item(self, key, value):
+        status = False
+        try:
+            if isinstance(value, list) or isinstance(value, dict):
+                value = json.dumps(value)
+            self.redis.set(key, value)
+            status = True
+        except Exception as exc:
+            logging.exception(exc)
+        return status
+
+    def delete_item(self, key):
+        status = False
+        try:
+            self.redis.delete(key)
+            status = True
+        except Exception as exc:
+            logging.exception(exc)
+        return status
+
+    def add_element_to_list(self, key, element):
+        status = False
+        try:
+            value = self.get_item(key)
+            if value:
+                value.append(element)
+                self.set_item(key, value)
+                status = True
+        except Exception as exc:
+            logging.exception(exc)
+        return status
 
 
 class SocketHandler:
@@ -72,7 +156,7 @@ class SocketHandler:
 
     def create_room(self):
         try:
-            new_room_id = "".join(random.choice(string.ascii_letters) for c in range(1, 10))
+            new_room_id = "".join(random.choice(string.digits) for c in range(1, 5))
             # Add cache: connection_id -> room_id
             sockets_map = self.get_socket_map()
             sockets_map[self.connection_id] = new_room_id
@@ -164,6 +248,13 @@ class SocketHandler:
                 redis.set_item(f"{self.key_room_sockets}{room_id}", sockets_in_room)
 
         logging.info(f"{self.connection_id} DISCONNECTED")
+
+
+api_connection_url = SystemManager().get_parameter("gateway_websocket_url")
+
+api_client = boto3.client('apigatewaymanagementapi', endpoint_url=api_connection_url)
+
+redis = RedisHandler()
 
 
 def lambda_handler(event, context):

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Sockette from "sockette";
-import Text from "./Text";
 
 let ws = null;
 
