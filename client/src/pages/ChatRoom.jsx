@@ -85,7 +85,7 @@ export default function ChatRoom({ props }) {
         selectedLanguage !== data.message.language
       ) {
         axios
-          .post(import.meta.env.VITE_APP_SOCKET_URL, {
+          .post(import.meta.env.VITE_APP_TRANSLATE_URL, {
             message: data.message.message,
             language: selectedLanguage,
           })
