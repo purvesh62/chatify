@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import ChatArea from "../components/ChatArea";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import axios from "axios";
 
 let sc = null;
 
@@ -32,10 +33,6 @@ export default function ChatRoom({ props }) {
     const e = event || window.event;
     // Cancel the event
     e.preventDefault();
-    // if (e) {
-    //   e.returnValue =
-    //     "If you refresh the browser then you might lose the access to the chatroom"; // Legacy method for cross browser support; // Legacy method for cross browser support
-    // }
     alert(
       "On refresh you might lose the access to the chatroom. Do you want to continue? (y/n)"
     );
@@ -102,13 +99,13 @@ export default function ChatRoom({ props }) {
           .catch(function (error) {
             console.log(error);
           });
-        let myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
+        // let myHeaders = new Headers();
+        // myHeaders.append("Content-Type", "application/json");
 
-        let raw = JSON.stringify({
-          message: data.message.message,
-          language: selectedLanguage,
-        });
+        // let raw = JSON.stringify({
+        //   message: data.message.message,
+        //   language: selectedLanguage,
+        // });
 
         // let requestOptions = {
         //   method: "POST",
@@ -145,7 +142,6 @@ export default function ChatRoom({ props }) {
       } else {
         setMessages((prevMessages) => [...prevMessages, data.message]);
       }
-      // setMessages((prevMessages) => [...prevMessages, data.message]);
     } else {
       navigate("/", { state: data });
     }
