@@ -4,8 +4,6 @@ import { useLocation } from "react-router-dom";
 import ChatArea from "../components/ChatArea";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import axios from "axios";
-
 
 let sc = null;
 
@@ -84,25 +82,65 @@ export default function ChatRoom({ props }) {
         username !== data.message.username &&
         selectedLanguage !== data.message.language
       ) {
-        axios
-          .post(import.meta.env.VITE_APP_TRANSLATE_URL, {
-            message: data.message.message,
-            language: selectedLanguage,
-          })
-          .then(function (response) {
-            if (response.data.body !== undefined) {
+        // axios
+        //   .post(import.meta.env.VITE_APP_TRANSLATE_URL, {
+        //     message: data.message.message,
+        //     language: selectedLanguage,
+        //   })
+        //   .then(function (response) {
+        //     if (response.data.body !== undefined) {
+        //       setMessages((prevMessages) => [
+        //         ...prevMessages,
+        //         {
+        //           message: response.data.body.translated_text,
+        //           username: data.message.username,
+        //           language: data.message.username,
+        //         },
+        //       ]);
+        //     }
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        //   });
+        let myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        let raw = JSON.stringify({
+          message: data.message.message,
+          language: selectedLanguage,
+        });
+
+        let requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+        fetch(import.meta.env.VITE_APP_TRANSLATE_URL, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(result.translated_text);
+            if (result.translated_text !== undefined) {
               setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                  message: response.data.body.translated_text,
+                  message: result.translated_text,
                   username: data.message.username,
                   language: data.message.username,
                 },
               ]);
             }
           })
-          .catch(function (error) {
-            console.log(error);
+          .catch((error) => {
+            console.log("error", error);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                message: data.message.message,
+                username: data.message.username,
+                language: data.message.username,
+              },
+            ]);
           });
       } else {
         setMessages((prevMessages) => [...prevMessages, data.message]);
