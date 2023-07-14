@@ -22,18 +22,12 @@ const Home = (props) => {
   }, []);
 
   const handleCreateRoom = (e) => {
-    // e.preventDefault();
-    // console.log("create room username: ", createRoomUsername);
-    // localStorage.setItem("username", createRoomUsername);
     navigate("/chatroom", {
       state: { username: createRoomUsername, type: "create_room" },
     });
   };
 
   const handleJoinRoom = (e) => {
-    // e.preventDefault();
-    // console.log("join room username: ", joinRoomUsername);
-    // console.log("join room id: ", joinRoomId);
     localStorage.setItem("username", joinRoomUsername);
     navigate("/chatroom", {
       state: {
@@ -42,7 +36,6 @@ const Home = (props) => {
         type: "join_room",
       },
     });
-    // navigate("/chatroom");
   };
 
   const handleUserNameChange = (event) => {

@@ -6,7 +6,6 @@ import About from "./pages/About";
 import "./App.css";
 
 function App() {
-
   return (
     <Routes>
       <Route path="/" element={<LandingPage />}></Route>
