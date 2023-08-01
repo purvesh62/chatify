@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Setup API Gateway, Lambda, and System Manager.
+
+Resources:
+  # Lambda Layer
+  LambdaLayer:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      LayerName: python
+      Description: A layer for the chatify lambda function
+      CompatibleRuntimes:
+        - python3.9
+      Content:
+        S3Bucket: chatify-app-5409
+        S3Key: python.zip
+
+  # Lambda function
+  LambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: python3.9
+      Code:
+        S3Bucket: "chatify-app-5409"
+        S3Key: "chatapp.zip"
+      FunctionName: chatify-5409
+      Handler: lambda_function.lambda_handler
+      Role: "arn:aws:iam::459415898649:role/LabRole"
+      Layers:
+        - !Ref LambdaLayer
+
+  LambdaIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref ChatAppApi
+      Description: Disconnect Integration
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::Sub:
+          arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations
+
+  # WebSocket API
+  ChatAppApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: chatApp
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: $request.body.action
+
+
+  # On connect route
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ChatAppApi
+      RouteKey: $connect
+      AuthorizationType: NONE
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref LambdaIntegration
+
+  # On disconnect route
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ChatAppApi
+      RouteKey: $disconnect
+      AuthorizationType: NONE
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref LambdaIntegration
+
+  # Default route
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref ChatAppApi
+      RouteKey: $default
+      AuthorizationType: NONE
+      Target: !Join
+        - '/'
+        - - 'integrations'
+          - !Ref LambdaIntegration
+
+  # WebSocket stage for deployment
+  ProductionStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref ChatAppApi
+      StageName: production
+      AutoDeploy: true
+
+  ChatifySystemManager:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: gateway_websocket_url
+      Type: String
+      Value: !Sub https://${ChatAppApi}.execute-api.${AWS::Region}.amazonaws.com/production
+
+
+
+
+Outputs:
+  # WebSocket URL for testing
+  WebSocketUrl:
+    Value: !Sub wss://${ChatAppApi}.execute-api.${AWS::Region}.amazonaws.com/production # construct WebSocket URL from API ID, region, and stage name

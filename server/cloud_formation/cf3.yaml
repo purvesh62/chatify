@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  AWSAccountId:
+    Type: String
+    Default: "714037844158"
+  SubnetID:
+    Type: String
+    Default: "subnet-09935b814003529ab"
+
+  PrefixName:
+    Type: String
+    Default: "chatify"
+
+Resources:
+
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Join [ "-", [ !Ref PrefixName, "cluster" ] ]
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join [ "-", [ !Ref PrefixName, "log-group" ] ]
+
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: ContainerSecurityGroup
+      GroupDescription: Security group for Chatify container
+      SecurityGroupIngress:
+        - FromPort: 3000
+          ToPort: 3000
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Join [ "-", [ !Ref PrefixName, "task" ] ]
+      Cpu: 256
+      Memory: 512
+      NetworkMode: awsvpc
+      ExecutionRoleArn: "arn:aws:iam::714037844158:role/LabRole"
+      ContainerDefinitions:
+        - Name: !Join [ "-", [ !Ref PrefixName, "container" ] ]
+          # Image: "714037844158.dkr.ecr.us-east-1.amazonaws.com/my-ecr-repo:latest"
+          Image: !Join ["", [!Ref AWSAccountId, ".dkr.ecr.",!Ref 'AWS::Region','.amazonaws.com/',!Ref PrefixName, "-","repo:latest"]]
+          PortMappings:
+            - ContainerPort: 3000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: !Ref AWS::Region
+              awslogs-group: !Ref LogGroup
+              awslogs-stream-prefix: ecs
+      RequiresCompatibilities:
+        - FARGATE
+
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Join [ "-", [ !Ref PrefixName, "service" ] ]
+      Cluster: !Ref Cluster
+      TaskDefinition: !Ref TaskDefinition
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+            - !Ref SubnetID
+          SecurityGroups:
+            - !GetAtt ContainerSecurityGroup.GroupId
+
