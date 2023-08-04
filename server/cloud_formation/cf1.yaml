@@ -19,7 +19,7 @@ Resources:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: redis
-      SecretString: "{   \"host\": \"redis-17221.c265.us-east-1-2.ec2.cloud.redislabs.com\",   \"password\": \"Redisroot1#\",   \"port\": \"17221\",   \"user\": \"purvesh.r\" }"
+      SecretString: ""
 
   ECRRepository:
     Type: 'AWS::ECR::Repository'
