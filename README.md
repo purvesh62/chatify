@@ -1,6 +1,8 @@
 # Chatify - A serverless chat application
 
-[Application Link](https://app-chatify.netlify.app/)
+
+[Application Demo](https://chatify.purvesh.me/)
+
 This application was a part of my graduate studies CSCI 5409 - Advanced Cloud Computing course project. 
 
 
