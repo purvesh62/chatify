@@ -24,7 +24,7 @@ function CustomTabPanel(props) {
       {...other}>
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component={"span"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -89,20 +89,8 @@ const Home = (props) => {
 
   return (
     <div className="h-full bg-gray-50">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
       <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="h-screen py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 lg:gap-16">
+        <div className="h-[95vh] py-8 px-4 mx-auto max-w-screen-xl lg:py-16 grid lg:grid-cols-2 lg:gap-16">
           {/* Jumpotron Header */}
           <div className="flex flex-col justify-center px-4">
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
@@ -111,12 +99,12 @@ const Home = (props) => {
               </span>
             </h1>
             <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
-            <p className="text-lg font-normal text-gray-500 lg:text-xl mb-2 dark:text-gray-400">
+            <Typography component={"span"} className="text-lg font-normal text-gray-500 lg:text-xl mb-2 dark:text-gray-400">
               Create your own chat room and invite your friends to join you! Our
               chat room application allows you to create a private chat room and
               start chatting with your friends in seconds. Join us now and start
               chatting with your friends!
-            </p>
+            </Typography>
             <button
               onClick={() => {
                 navigate("/about");
@@ -146,12 +134,12 @@ const Home = (props) => {
                 Let's chat!
               </h1>
               {previousRoomId !== null && (
-                <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
+                <Typography component={"span"} className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
                   Most recent Room ID:{" "}
                   <mark className="px-1 py-0.5 text-white bg-blue-600 rounded dark:bg-blue-500">
                     {localStorage.getItem("room")}
                   </mark>
-                </p>
+                </Typography>
               )}
               <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 
@@ -173,11 +161,9 @@ const Home = (props) => {
                       handleCreateRoom(e);
                     }}>
                     <div>
-                      <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      <Typography component={"span"} htmlFor="name" className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
                         Your name
-                      </label>
+                      </Typography>
                       <TextField
                         value={createRoomUsername}
                         onChange={(e) => setCreateRoomUsername(e.target.value)}
@@ -185,7 +171,7 @@ const Home = (props) => {
                         name="name"
                         id="name"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Your name"
+                        placeholder="Zoro"
                         required
                       />
                     </div>
@@ -193,7 +179,8 @@ const Home = (props) => {
                       sx={{ borderRadius: "5px"}}
                       variant="contained"
                       type="submit"
-                      className="w-full px-2 py-2.5 text-base font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                      className="w-full px-2 py-2.5 text-base font-medium text-center text-white bg-blue-500 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 sm:w-auto dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                      >
                       Create Room
                     </Button>
                   </form>
@@ -206,27 +193,23 @@ const Home = (props) => {
                       handleJoinRoom(e);
                     }}>
                     <div>
-                      <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      <Typography component={"span"} htmlFor="name" className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
                         Your name
-                      </label>
+                      </Typography>
                       <TextField
                         onChange={(e) => setJoinRoomUsername(e.target.value)}
                         name="name"
                         id="name"
-                        placeholder="Your name"
+                        placeholder="Luffy"
                         value={joinRoomUsername}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         required
                       />
                     </div>
                     <div>
-                      <label
-                        htmlFor="join-room-ip"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      <Typography component={"span"} htmlFor="join-room-ip" className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
                         Room ID
-                      </label>
+                      </Typography>
                       <TextField
                         value={joinRoomId}
                         onChange={(e) => setJoinRoomId(e.target.value)}
@@ -234,7 +217,7 @@ const Home = (props) => {
                         name="join-room-ip"
                         id="join-room-ip"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Room ID"
+                        placeholder="1234"
                         required
                       />
                     </div>

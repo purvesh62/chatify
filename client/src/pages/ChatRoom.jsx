@@ -65,6 +65,9 @@ export default function ChatRoom({ props }) {
   }
 
   function onMessage(e) {
+    if (e.data === "") {
+      return;
+    }
     let data = JSON.parse(e.data);
     // console.log("Incoming message: ", data);
     if (data.type === "create_room") {
@@ -77,68 +80,46 @@ export default function ChatRoom({ props }) {
       let selectedLanguage = document.getElementById("language").value;
       if (
         username !== data.message.username &&
-        selectedLanguage !== data.message.language
+        selectedLanguage !== data.message.language &&
+        data.message.language !== undefined
       ) {
+        console.log(
+          `Translating... ${data.message.message} ${selectedLanguage}`
+        );
         axios
           .post(import.meta.env.VITE_APP_TRANSLATE_URL, {
             message: data.message.message,
             language: selectedLanguage,
           })
           .then(function (response) {
-            if (response.data.body !== undefined) {
+            if (response.data !== undefined) {
               setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                  message: response.data.body.translated_text,
+                  message: response.data.translated_text,
                   username: data.message.username,
-                  language: data.message.username,
+                  language: selectedLanguage,
                 },
               ]);
             }
           })
           .catch(function (error) {
             console.log(error);
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                message: "Error while translated text...",
+                username: "System",
+                language: selectedLanguage,
+              },
+              {
+                message: data.message.message,
+                username: data.message.username,
+                language: selectedLanguage,
+              },
+            ]);
+            document.getElementById("language").value = "en";
           });
-        // let myHeaders = new Headers();
-        // myHeaders.append("Content-Type", "application/json");
-
-        // let raw = JSON.stringify({
-        //   message: data.message.message,
-        //   language: selectedLanguage,
-        // });
-
-        // let requestOptions = {
-        //   method: "POST",
-        //   headers: myHeaders,
-        //   body: raw,
-        //   redirect: "follow",
-        // };
-        // fetch(import.meta.env.VITE_APP_TRANSLATE_URL, requestOptions)
-        //   .then((response) => response.json())
-        //   .then((result) => {
-        //     console.log(result.translated_text);
-        //     if (result.translated_text !== undefined) {
-        //       setMessages((prevMessages) => [
-        //         ...prevMessages,
-        //         {
-        //           message: result.translated_text,
-        //           username: data.message.username,
-        //           language: data.message.username,
-        //         },
-        //       ]);
-        //     }
-        //   })
-        //   .catch((error) => {
-        //     console.log("error", error);
-        //     setMessages((prevMessages) => [
-        //       ...prevMessages,
-        //       {
-        //         message: data.message.message,
-        //         username: data.message.username,
-        //         language: data.message.username,
-        //       },
-        //     ]);
-        //   });
       } else {
         setMessages((prevMessages) => [...prevMessages, data.message]);
       }
@@ -167,7 +148,6 @@ export default function ChatRoom({ props }) {
 
   function disconnectChat(e) {
     e.preventDefault();
-    console.log("Disconnecting...");
     sc.close(); // graceful shutdown
     navigate("/", {
       state: {
@@ -178,7 +158,7 @@ export default function ChatRoom({ props }) {
 
   return (
     <div>
-      <div className="h-screen flex justify-center">
+      <div className="h-screen flex justify-center py-1">
         <ChatArea
           messages={messages}
           sendMessage={sendMessage}
@@ -187,7 +167,7 @@ export default function ChatRoom({ props }) {
           disconnectChat={disconnectChat}
         />
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

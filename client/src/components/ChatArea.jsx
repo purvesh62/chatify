@@ -5,8 +5,14 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 export default function ChatArea(props) {
+  const messagesEndRef = useRef(null);
+
+  // if (messagesEndRef.current) {
+  //   messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+  // }
+
   const [imgGif, setImgGif] = useState(
-    "https://gif-avatars.com/img/100x100/nicki-minaj-1.gif"
+    "https://gif-avatars.com/img/100x100/avatar-105.gif"
   );
 
   let messages = props.messages;
@@ -18,8 +24,6 @@ export default function ChatArea(props) {
       return <LeftBubble key={index} data={m} />;
     }
   });
-  // ref={messagesEndRef}
-  console.log(bubbles);
 
   useEffect(() => {
     axios
@@ -31,16 +35,17 @@ export default function ChatArea(props) {
       });
   }, []);
 
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  scrollToBottom();
+    useEffect(() => {
+        if (messages.length){
+            messagesEndRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "end"
+            })
+        }
+    }, [messages.length]);
 
   return (
-    <div className="container h-screen flex items-center align-middle lg:px-32">
+    <div className="container h-screen flex items-center lg:px-10 xl:px-16">
       <div className="min-w-full mx-auto border-8 border-gray-500 rounded">
         <div className="w-full">
           {/* Header */}
@@ -62,6 +67,10 @@ export default function ChatArea(props) {
                 <span className="block ml-2 text-l text-gray-600">
                   Name: {props.username}
                 </span>
+                <span className="block ml-2 text-l text-gray-600">
+                  Share the code {props.roomId} with your other friends to join
+                  the chat!
+                </span>
               </div>
               <span className="absolute w-3 h-3 bg-green-600 rounded-full left-12 top-5"></span>
             </div>
@@ -78,9 +87,7 @@ export default function ChatArea(props) {
                 defaultValue={"en"}
                 className="select border-gray-300 bg-white w-full"
                 id="language">
-                <option value={"en"}>
-                  English
-                </option>
+                <option value={"en"}>English</option>
                 <option value={"ar"}>Arabic</option>
                 <option value={"zh"}>Chinese</option>
                 <option value={"fr"}>French</option>
@@ -96,11 +103,12 @@ export default function ChatArea(props) {
 
           <div
             className="relative w-full py-4 px-2 overflow-y-auto h-[30rem]"
-            >
-              {/* ref={messagesEndRef} */}
-            {bubbles}
+            // ref={messagesEndRef}
+            id={"messagesEndRef"}
+          >
+            <div>{bubbles}</div>
+          <div ref={messagesEndRef} className="m-1"/>
           </div>
-
           <form
             className="flex items-center justify-between w-full p-3 border-t border-gray-300"
             onSubmit={(e) => {
